@@ -91,7 +91,7 @@ public class Main {
                 System.out.print(" _ ");
             cor[i]=true;
         }
-        System.out.println("Hello");
+        System.out.println("");
     }
 
     //@author Peter Walser
