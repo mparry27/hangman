@@ -8,13 +8,18 @@
  */
 package com.csis2450;
 
+import java.util.Scanner;
+
 public class Main {
     /************
      *  Fields  *
      ***********/
-    private static String wordToGuess = "Orange";
+    private static String wordToGuess = "Purple";
     private static int numOfGuess = 0;
 
+    /************************
+     *         Main         *
+     ***********************/
     public static void main(String[] args){
         //Check if the argument passed is a valid word
         //If not, use the default word
@@ -27,6 +32,7 @@ public class Main {
         } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println(e);
         }
+        wordToGuess = wordToGuess.toUpperCase();
         game();
     }
 
@@ -36,14 +42,51 @@ public class Main {
     //game
     private static void game(){
         boolean[] correctGuess = new boolean[wordToGuess.length()];
+        Scanner sc = new Scanner(System.in);
 
         //Game Loop
         do{
-            drawHangman(correctGuess);
-        } while(!allTrue(correctGuess) && numOfGuess<=6);
+            drawHangman();
+            for(int i=0;i<correctGuess.length;i++){
+                if(correctGuess[i])
+                    System.out.print(" "+wordToGuess.charAt(i)+" ");
+                else
+                    System.out.print(" _ ");
+
+            }
+            System.out.print("\n\n Please guess a letter: ");
+            char guess = Character.toUpperCase(sc.next().charAt(0));
+            boolean foundChar = false;
+            for (int i = 0; i < correctGuess.length; i++) {
+                if (guess == wordToGuess.charAt(i)) {
+                    correctGuess[i] = true;
+                    foundChar = true;
+                }
+            }
+            if (!foundChar)
+                numOfGuess++;
+        } while(!allTrue(correctGuess) && numOfGuess<6);
+
+        if(allTrue(correctGuess)) {
+            drawHangman();
+            for(int i=0;i<wordToGuess.length();i++){
+                System.out.print(" "+wordToGuess.charAt(i)+" ");
+            }
+            System.out.println("\n\nYOU WIN!");
+        }
+        else {
+            drawHangman();
+            for(int i=0;i<wordToGuess.length();i++){
+                System.out.print(" "+wordToGuess.charAt(i)+" ");
+            }
+            System.out.println("\n\nYOU LOSE!");
+        }
+
     }
 
-    private static void drawHangman(boolean[] cor) {
+    //Draws the hangman depending on the number of incorrect guesses
+    private static void drawHangman() {
+        clearScreen();
         System.out.println("-------------");
         System.out.println("     |     | ");
         switch(numOfGuess) {
@@ -55,7 +98,7 @@ public class Main {
             case 2:
                 System.out.println("     O     | ");
                 System.out.println("     |     | ");
-                System.out.println("          | ");
+                System.out.println("           | ");
                 break;
             case 3:
                 System.out.println("     O     | ");
@@ -83,15 +126,8 @@ public class Main {
                 System.out.println("           | ");
                 break;
         }
-        System.out.println("           | \n");
-        for(int i=0;i<cor.length;i++){
-            if(cor[i])
-                System.out.print(" "+wordToGuess.charAt(i)+" ");
-            else
-                System.out.print(" _ ");
-            cor[i]=true;
-        }
-        System.out.println("");
+        System.out.println("           | ");
+        System.out.println("Lives: " + (6-numOfGuess));
     }
 
     //@author Peter Walser
@@ -106,5 +142,9 @@ public class Main {
         return true;
     }
 
+    private static void clearScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
 
 }
